@@ -3,9 +3,10 @@ import socket
 
 
 class Client:
-    def __init__(self, ip="127.0.0.1", port=10001):
+    def __init__(self, ip="127.0.0.1", port=10001, timeout=None):
         self._sock = socket.socket()
         self._sock.connect((ip, port))
+        self._sock.settimeout(timeout)
 
     def put(self, metrics_name, metrics, timestamp=None):
         timing = timestamp or int(time.time())
