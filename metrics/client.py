@@ -14,7 +14,7 @@ class Client:
         self._sock.sendall(payload.encode("utf8"))
 
     def get(self, metrics_name):
-        self._sock.sendall("metrics_name")
+        self._sock.sendall(metrics_name.encode("utf8"))
         response = self._sock.recv(1024)
         print("response")
 

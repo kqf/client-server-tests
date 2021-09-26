@@ -30,4 +30,32 @@ def test_puts_metrics(client):
     client.put("eardrum.cpu", 3, timestamp=1150864250)
     client.put("eardrum.cpu", 4, timestamp=1150864251)
     client.put("eardrum.memory", 4200000)
+
+
+@pytest.mark.parametrize("mname, server_response, outputs", [
+    (
+        "palm.cpu",
+        "palm.cpu 0.5 111\npalm.cpu 0.6 112", 
+        {
+            "palm.cpu": [
+                (0.5, 111),
+                (0.6, 112),
+            ]
+        }
+    ),
+    (
+        "*",
+        "palm.cpu 0.5 111\npalm.cpu 0.6 112\neardrum.cpu 0.8 113", 
+        {
+            "palm.cpu": [
+                (0.5, 111),
+                (0.6, 112),
+            ],
+            "eardrum.cpu": [
+                (0.8, 113),
+            ]
+        }
+    ),
+])
+def test_gets_metrics(mname, server_response, outputs, client):
     print(client.get("*"))
