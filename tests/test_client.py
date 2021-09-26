@@ -7,18 +7,18 @@ from contextlib import closing
 from metrics.client import Client
 
 
-
 @pytest.fixture
 def addr(ip="127.0.0.1", port=10001):
     return {"ip": ip, "port": port}
 
- 
+
 @pytest.fixture
 def server(addr):
     with socket.socket() as sock:
         sock.bind(("", 10001))
-        sock.listen()   
+        sock.listen()
         yield sock
+
 
 @pytest.fixture
 def client(server, addr):
@@ -35,10 +35,10 @@ def test_puts_metrics(client):
     client.put("eardrum.memory", 4200000)
 
 
-@pytest.mark.parametrize("mname, server_response, outputs", [
+@pytest.mark.parametrize("mname, server_response, expected", [
     (
         "palm.cpu",
-        "palm.cpu 0.5 111\npalm.cpu 0.6 112", 
+        "palm.cpu 0.5 111\npalm.cpu 0.6 112",
         {
             "palm.cpu": [
                 (0.5, 111),
@@ -48,7 +48,7 @@ def test_puts_metrics(client):
     ),
     (
         "*",
-        "palm.cpu 0.5 111\npalm.cpu 0.6 112\neardrum.cpu 0.8 113", 
+        "palm.cpu 0.5 111\npalm.cpu 0.6 112\neardrum.cpu 0.8 113",
         {
             "palm.cpu": [
                 (0.5, 111),
@@ -61,6 +61,7 @@ def test_puts_metrics(client):
     ),
 ])
 @mock.patch("socket.socket.recv")
-def test_gets_metrics(recv, mname, server_response, outputs, client):
+def test_gets_metrics(recv, mname, server_response, expected, client):
     recv.return_value = server_response.encode("utf8")
-    print(client.get("*"))
+    outputs = client.get(mname)
+    assert outputs == expected
