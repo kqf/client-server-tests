@@ -15,8 +15,8 @@ class Client:
 
     def get(self, metrics_name):
         self._sock.sendall(metrics_name.encode("utf8"))
-        response = self._sock.recv(1024)
-        print("response")
+        response = self._sock.recv(1024).decode("utf8")
+        return response
 
     def close(self):
         self._sock.close()

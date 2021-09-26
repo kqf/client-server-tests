@@ -1,5 +1,8 @@
 import pytest
 import socket
+
+from unittest import mock
+
 from contextlib import closing
 from metrics.client import Client
 
@@ -57,5 +60,7 @@ def test_puts_metrics(client):
         }
     ),
 ])
-def test_gets_metrics(mname, server_response, outputs, client):
+@mock.patch("socket.socket.recv")
+def test_gets_metrics(recv, mname, server_response, outputs, client):
+    recv.return_value = server_response.encode("utf8")
     print(client.get("*"))
