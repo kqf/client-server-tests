@@ -13,7 +13,7 @@ def _parse_metrics(message):
         )
     return output
 
-  
+
 class Client:
     def __init__(self, ip="127.0.0.1", port=10001, timeout=None):
         self._sock = socket.socket()

@@ -19,7 +19,7 @@ def server(addr):
         sock.listen()
         yield sock
 
-    
+
 @pytest.fixture
 def client(server, addr):
     with closing(Client(**addr, timeout=15)) as client:
@@ -65,4 +65,3 @@ def test_gets_metrics(recv, mname, server_response, expected, client):
     recv.return_value = server_response.encode("utf8")
     outputs = client.get(mname)
     assert outputs == expected
-
