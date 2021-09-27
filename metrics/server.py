@@ -1,8 +1,18 @@
 import asyncio
+from functools import lru_cache
 
 
-def process_data(str):
-    pass
+@lru_cache
+def process_data(message):
+    if message.startswith("get"):
+        _, metric_name = message.split()
+        return metric_name
+
+    if message.startswith("put"):
+        command, metric_name, metric, timestamp = message.split()
+        return {(metric_name, timestamp): metric}
+
+    raise NotImplemented("Other commands are not implemented")
 
 
 class ClientServerProtocol(asyncio.Protocol):
