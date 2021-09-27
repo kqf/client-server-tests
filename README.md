@@ -1,4 +1,4 @@
-# Simple client-server app 
+# Simple client-server app  [![tests](https://github.com/kqf/client-server-tests/actions/workflows/ci.yml/badge.svg)](https://github.com/kqf/client-server-tests/actions/workflows/ci.yml)
 
 ## Install
 ```bash
