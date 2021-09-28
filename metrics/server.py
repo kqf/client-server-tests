@@ -21,6 +21,7 @@ class ClientServerProtocol(asyncio.Protocol):
 
     def data_received(self, data):
         resp = process_data(data.decode())
+        print("Server: received the following message:", data.decode())
         self.transport.write(resp.encode())
 
 
