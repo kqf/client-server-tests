@@ -1,4 +1,5 @@
 setuptools
 pytest
 pytest-cov
+pytest-asyncio
 flake8
