@@ -5,11 +5,6 @@ from unittest import mock
 
 
 @pytest.fixture
-def addr(ip="127.0.0.1", port=10001):
-    return {"ip": ip, "port": port}
-
-
-@pytest.fixture
 def server(addr):
     with socket.socket() as sock:
         sock.bind(("", 10001))

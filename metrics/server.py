@@ -18,6 +18,7 @@ def process_data(message):
 class ClientServerProtocol(asyncio.Protocol):
     def connection_made(self, transport):
         self.transport = transport
+        print("Connection made")
 
     def data_received(self, data):
         resp = process_data(data.decode())
