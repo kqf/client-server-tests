@@ -32,21 +32,16 @@ class ClientServerProtocol(asyncio.Protocol):
         self.transport.close()
 
 
-def main():
-    loop = asyncio.get_event_loop()
-    coro = asyncio.start_server(
-        ClientServerProtocol,
-        "127.0.0.1", 10001
-    )
-    server = loop.run_until_complete(coro)
-    try:
-        loop.run_forever()
-    except KeyboardInterrupt:
-        pass
-    server.close()
-    loop.run_until_complete(server.wait_closed())
-    loop.close()
+async def main():
+    loop = asyncio.get_running_loop()
+
+    server = await loop.create_server(
+        lambda: ClientServerProtocol(),
+        '127.0.0.1', 8888)
+
+    async with server:
+        await server.serve_forever()
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
