@@ -17,20 +17,26 @@ def process_data(message):
 
 class ClientServerProtocol(asyncio.Protocol):
     def connection_made(self, transport):
+        peername = transport.get_extra_info('peername')
+        print('Connection from {}'.format(peername))
         self.transport = transport
-        print("Connection made")
 
     def data_received(self, data):
-        resp = process_data(data.decode())
-        print("Server: received the following message:", data.decode())
-        self.transport.write(resp.encode())
+        message = data.decode()
+        print('Data received: {!r}'.format(message))
+
+        print('Send: {!r}'.format(message))
+        self.transport.write(data)
+
+        print('Close the client socket')
+        self.transport.close()
 
 
 def main():
     loop = asyncio.get_event_loop()
     coro = asyncio.start_server(
         ClientServerProtocol,
-        "127.0.0.1", 10001, loop=loop
+        "127.0.0.1", 10001
     )
     server = loop.run_until_complete(coro)
     try:
