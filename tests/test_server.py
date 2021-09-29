@@ -1,17 +1,17 @@
 import pytest
-import asyncio
 from metrics.server import ClientServerProtocol
 
 
 @pytest.fixture
-def server(event_loop, addr):
-    coro = asyncio.start_server(ClientServerProtocol, addr["ip"], addr["port"])
-    server = event_loop.run_until_complete(coro)
+async def server(event_loop, addr):
+    server = await event_loop.create_server(
+        lambda: ClientServerProtocol(),
+        addr["ip"], addr["port"])
     yield server
-    server.close()
-    event_loop.run_until_complete(server.wait_closed())
-    event_loop.close()
+    async with server:
+        await server.wait_closed()
 
 
 def test_metrics_server(event_loop, server, client):
     client.put("palm.cpu", 0.5, timestamp=1150864247)
+    server.close()
