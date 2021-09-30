@@ -8,10 +8,8 @@ async def server(event_loop, addr):
         lambda: ClientServerProtocol(),
         addr["ip"], addr["port"])
     yield server
-    async with server:
-        await server.wait_closed()
 
 
-def test_metrics_server(event_loop, server, client):
+@pytest.mark.asyncio
+async def test_metrics_server(event_loop, server, client):
     client.put("palm.cpu", 0.5, timestamp=1150864247)
-    server.close()
