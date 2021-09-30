@@ -39,7 +39,6 @@ async def main():
         lambda: ClientServerProtocol(),
         '127.0.0.1', 10001)
 
-
     async with server:
         await server.serve_forever()
 
