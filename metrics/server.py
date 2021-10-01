@@ -29,7 +29,11 @@ class MetricsProtocol:
 
     def execute(self, message):
         data = message.split()
-        command, *_ = data
+
+        try:
+            command, *_ = data
+        except ValueError:
+            return "error\nwrong command\n\n"
 
         if command not in self._exposed_methods:
             return "error\nwrong command\n\n"
@@ -41,13 +45,28 @@ class MetricsProtocol:
         sleep(self.timeout)
         try:
             _, metric_name, metric, timestamp = message.split()
+            self.store[metric_name][int(timestamp)] = float(metric)
         except ValueError:
             return "error\nwrong command\n\n"
-        self.store[metric_name][timestamp] = metric
         return "ok\n\n"
 
     def get(self, message):
-        return message
+        sleep(self.timeout)
+        try:
+            _, metric_name = message.split()
+        except ValueError:
+            return "error\nwrong command\n\n"
+
+        payload = "\n".join(self._ls(metric_name))
+        return f"ok\n{payload}\n\n"
+
+    def _ls(self, name):
+        for metric_name, entries in self.store.items():
+            if name != metric_name and name != "*":
+                continue
+
+            for timestamp, value in entries.items():
+                yield f"{metric_name} {value} {timestamp}"
 
 
 class ClientServerProtocol(asyncio.Protocol, MetricsProtocol):
