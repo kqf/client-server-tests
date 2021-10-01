@@ -1,7 +1,6 @@
 import asyncio
 from functools import lru_cache
 
-
 @lru_cache
 def process_data(message):
     if message.startswith("get"):
@@ -13,6 +12,32 @@ def process_data(message):
         return {(metric_name, timestamp): metric}
 
     raise NotImplementedError("Other commands are not implemented")
+
+
+class MetricsProtocol:
+    _exposed_methods = {
+        "put",
+        "get",
+    }
+
+    def __init__(self, store=None):
+        self.store = store or {}
+
+    def execute(self, message):
+        data = message.split()
+        command, *_ = data
+
+        if command not in self._exposed_methods:
+            return "error\nwrong command\n\n"
+
+        method = getattr(self, command)
+        return method(message)
+
+    def put(self, message):
+        return message
+
+    def get(self, message):
+        return message
 
 
 class ClientServerProtocol(asyncio.Protocol):
@@ -27,9 +52,10 @@ class ClientServerProtocol(asyncio.Protocol):
 
         print('Send: {!r}'.format(message))
         self.transport.write(data)
+        # asyncio.run(asyncio.sleep(1))
 
-        print('Close the client socket')
-        self.transport.close()
+        # print('Close the client socket')
+        # self.transport.close()
 
 
 async def main():
