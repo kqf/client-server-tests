@@ -41,12 +41,13 @@ class MetricsProtocol:
         sleep(self.timeout)
         try:
             _, metric_name, metric, timestamp = message.split()
+            self.store[metric_name][int(timestamp)] = float(metric)
         except ValueError:
             return "error\nwrong command\n\n"
-        self.store[metric_name][timestamp] = metric
         return "ok\n\n"
 
     def get(self, message):
+        sleep(self.timeout)
         return message
 
 
