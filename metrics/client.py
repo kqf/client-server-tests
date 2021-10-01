@@ -22,7 +22,7 @@ class Client:
 
     def put(self, metrics_name, metrics, timestamp=None):
         timing = timestamp or int(time.time())
-        payload = f"put {metrics_name} {metrics} {timing}"
+        payload = f"put {metrics_name} {metrics} {timing}\n"
         self._sock.sendall(payload.encode("utf8"))
 
     def get(self, metrics_name):
