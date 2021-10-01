@@ -1,5 +1,7 @@
 import asyncio
+from time import sleep
 from functools import lru_cache
+from collections import defaultdict
 
 
 @lru_cache
@@ -15,21 +17,56 @@ def process_data(message):
     raise NotImplementedError("Other commands are not implemented")
 
 
-class ClientServerProtocol(asyncio.Protocol):
+class MetricsProtocol:
+    _exposed_methods = {
+        "put",
+        "get",
+    }
+
+    def __init__(self, store=None, timeout=0):
+        self.store = store or defaultdict(dict)
+        self.timeout = timeout
+
+    def execute(self, message):
+        data = message.split()
+        command, *_ = data
+
+        if command not in self._exposed_methods:
+            return "error\nwrong command\n\n"
+
+        method = getattr(self, command)
+        return method(message)
+
+    def put(self, message):
+        sleep(self.timeout)
+        try:
+            _, metric_name, metric, timestamp = message.split()
+        except ValueError:
+            return "error\nwrong command\n\n"
+        self.store[metric_name][timestamp] = metric
+        return "ok\n\n"
+
+    def get(self, message):
+        return message
+
+
+class ClientServerProtocol(asyncio.Protocol, MetricsProtocol):
     def connection_made(self, transport):
         peername = transport.get_extra_info('peername')
         print('Connection from {}'.format(peername))
         self.transport = transport
 
     def data_received(self, data):
-        message = data.decode()
-        print('Data received: {!r}'.format(message))
+        request_body = data.decode()
+        print(f'Data received: {request_body}')
 
-        print('Send: {!r}'.format(message))
-        self.transport.write(data)
+        response = self.execute(request_body)
 
-        print('Close the client socket')
-        self.transport.close()
+        print(f'Send: {response}')
+        self.transport.write(response.encode("utf-8"))
+
+        # print('Close the client socket')
+        # self.transport.close()
 
 
 async def main():
