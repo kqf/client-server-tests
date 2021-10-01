@@ -3,6 +3,7 @@ from time import sleep
 from functools import lru_cache
 from collections import defaultdict
 
+
 @lru_cache
 def process_data(message):
     if message.startswith("get"):
