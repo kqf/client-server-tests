@@ -1,20 +1,6 @@
 import asyncio
 from time import sleep
-from functools import lru_cache
 from collections import defaultdict
-
-
-@lru_cache
-def process_data(message):
-    if message.startswith("get"):
-        _, metric_name = message.split()
-        return metric_name
-
-    if message.startswith("put"):
-        command, metric_name, metric, timestamp = message.split()
-        return {(metric_name, timestamp): metric}
-
-    raise NotImplementedError("Other commands are not implemented")
 
 
 class MetricsProtocol:
@@ -83,9 +69,6 @@ class ClientServerProtocol(asyncio.Protocol, MetricsProtocol):
 
         print(f'Send: {response}')
         self.transport.write(response.encode("utf-8"))
-
-        # print('Close the client socket')
-        # self.transport.close()
 
 
 async def main():
