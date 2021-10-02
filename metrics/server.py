@@ -1,6 +1,11 @@
 import asyncio
 from time import sleep
 from collections import defaultdict
+from environs import Env
+
+
+env = Env()
+env.read_env()
 
 
 class MetricsProtocol:
@@ -76,7 +81,7 @@ async def main():
 
     server = await loop.create_server(
         lambda: ClientServerProtocol(),
-        '127.0.0.1', 10001)
+        '127.0.0.1', env("PORT"))
 
     async with server:
         await server.serve_forever()
