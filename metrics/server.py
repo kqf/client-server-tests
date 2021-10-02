@@ -81,7 +81,7 @@ async def main():
 
     server = await loop.create_server(
         lambda: ClientServerProtocol(),
-        '127.0.0.1', env("PORT"))
+        '127.0.0.1', env("PORT", 10001))
 
     async with server:
         await server.serve_forever()
