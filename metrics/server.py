@@ -70,9 +70,6 @@ class ClientServerProtocol(asyncio.Protocol, MetricsProtocol):
         print(f'Send: {response}')
         self.transport.write(response.encode("utf-8"))
 
-        # print('Close the client socket')
-        # self.transport.close()
-
 
 async def main():
     loop = asyncio.get_running_loop()
