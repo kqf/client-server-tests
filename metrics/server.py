@@ -76,6 +76,7 @@ class ClientServerProtocol(asyncio.Protocol, MetricsProtocol):
         response = self.execute(request_body)
 
         print(f'Send: {response}')
+        print(f'The transport type is {type(self.transport)}')
         self.transport.write(response.encode("utf-8"))
 
 
