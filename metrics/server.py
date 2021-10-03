@@ -95,6 +95,8 @@ async def main():
         port,
         family=AF_INET,
         type=SOCK_STREAM,
+        # reuse_port=True,
+        reuse_address=True,
     )
 
     async with server:
