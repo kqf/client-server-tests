@@ -94,7 +94,7 @@ async def main():
         '127.0.0.1',
         port,
         family=AF_INET,
-        type=SOCK_STREAM,
+        # type=SOCK_STREAM,
         # reuse_port=True,
         reuse_address=True,
     )
