@@ -4,10 +4,11 @@ from collections import defaultdict
 from environs import Env
 
 from socket import (
+    socket,
     AF_INET,
     SOCK_STREAM,
-    # SO_REUSEADDR,
-    # SOL_SOCKET
+    SO_REUSEADDR,
+    SOL_SOCKET,
 )
 
 
@@ -89,18 +90,24 @@ async def main():
     print()
     print(f"Starting the connectin at port {port}")
 
-    server = await loop.create_server(
-        lambda: ClientServerProtocol(),
-        '127.0.0.1',
-        port,
-        family=AF_INET,
-        # type=SOCK_STREAM,
-        # reuse_port=True,
-        reuse_address=True,
-    )
+    with socket(AF_INET, SOCK_STREAM) as sock:
+        sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        sock.bind(('127.0.0.1', port))
+        sock.listen(1)
 
-    async with server:
-        await server.serve_forever()
+        server = await loop.create_server(
+            lambda: ClientServerProtocol(),
+            # '127.0.0.1',
+            # port,
+            sock=sock,
+            # family=AF_INET,
+            # type=SOCK_STREAM,
+            # reuse_port=True,
+            # reuse_address=True,
+        )
+
+        async with server:
+            await server.serve_forever()
 
 
 if __name__ == '__main__':
