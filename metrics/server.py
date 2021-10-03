@@ -4,6 +4,9 @@ from collections import defaultdict
 from environs import Env
 
 
+from metrics.http import add_http_layer
+
+
 env = Env()
 env.read_env()
 
@@ -84,7 +87,8 @@ async def main():
     print(f"Starting the connectin at {addr}:{port}")
 
     server = await loop.create_server(
-        lambda: ClientServerProtocol(),
+        # Start on heroku
+        add_http_layer(ClientServerProtocol),
         addr,
         port,
     )
