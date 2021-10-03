@@ -3,6 +3,14 @@ from time import sleep
 from collections import defaultdict
 from environs import Env
 
+from socket import (
+    socket,
+    AF_INET,
+    SOCK_STREAM,
+    SO_REUSEADDR,
+    SOL_SOCKET,
+)
+
 
 env = Env()
 env.read_env()
@@ -78,13 +86,25 @@ class ClientServerProtocol(asyncio.Protocol, MetricsProtocol):
 
 async def main():
     loop = asyncio.get_running_loop()
+    addr = env("SERVER_ADDR", '127.0.0.1')
+    port = env.int("PORT", 10001)
+    print()
+    print(f"Starting the connectin at {addr}:{port}")
 
-    server = await loop.create_server(
-        lambda: ClientServerProtocol(),
-        '127.0.0.1', env("PORT", 10001))
+    with socket(AF_INET, SOCK_STREAM) as sock:
+        sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        sock.bind((addr, port))
+        sock.listen(1)
 
-    async with server:
-        await server.serve_forever()
+        server = await loop.create_server(
+            lambda: ClientServerProtocol(),
+            # '127.0.0.1',
+            # port,
+            sock=sock,
+        )
+
+        async with server:
+            await server.serve_forever()
 
 
 if __name__ == '__main__':
