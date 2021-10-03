@@ -78,10 +78,13 @@ class ClientServerProtocol(asyncio.Protocol, MetricsProtocol):
 
 async def main():
     loop = asyncio.get_running_loop()
+    print()
+    port = env("PORT", 10001)
+    print(f"Starting the connectin at port {port}")
 
     server = await loop.create_server(
         lambda: ClientServerProtocol(),
-        '127.0.0.1', env("PORT", 10001))
+        '127.0.0.1', port)
 
     async with server:
         await server.serve_forever()
