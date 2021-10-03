@@ -101,6 +101,7 @@ async def main():
         addr,
         port,
         # sock=sock,
+        reuse_address=True
     )
 
     async with server:
