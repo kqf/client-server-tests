@@ -86,13 +86,14 @@ class ClientServerProtocol(asyncio.Protocol, MetricsProtocol):
 
 async def main():
     loop = asyncio.get_running_loop()
+    addr = env("SERVER", '127.0.0.1')
     port = env.int("PORT", 10001)
     print()
     print(f"Starting the connectin at port {port}")
 
     with socket(AF_INET, SOCK_STREAM) as sock:
         sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        sock.bind(('127.0.0.1', port))
+        sock.bind((addr, port))
         sock.listen(1)
 
         server = await loop.create_server(
