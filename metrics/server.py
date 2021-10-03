@@ -3,14 +3,6 @@ from time import sleep
 from collections import defaultdict
 from environs import Env
 
-from socket import (
-    socket,
-    AF_INET,
-    SOCK_STREAM,
-    SO_REUSEADDR,
-    SOL_SOCKET,
-)
-
 
 env = Env()
 env.read_env()
@@ -91,17 +83,10 @@ async def main():
     print()
     print(f"Starting the connectin at {addr}:{port}")
 
-    # with socket(AF_INET, SOCK_STREAM) as sock:
-    #     sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-    #     sock.bind((addr, port))
-    #     sock.listen(1)
-
     server = await loop.create_server(
         lambda: ClientServerProtocol(),
         addr,
         port,
-        # sock=sock,
-        reuse_address=True
     )
 
     async with server:
