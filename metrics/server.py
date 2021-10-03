@@ -86,10 +86,10 @@ class ClientServerProtocol(asyncio.Protocol, MetricsProtocol):
 
 async def main():
     loop = asyncio.get_running_loop()
-    addr = env("SERVER", '127.0.0.1')
+    addr = env("SERVER_ADDR", '127.0.0.1')
     port = env.int("PORT", 10001)
     print()
-    print(f"Starting the connectin at port {port}")
+    print(f"Starting the connectin at {addr}:{port}")
 
     with socket(AF_INET, SOCK_STREAM) as sock:
         sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
@@ -101,10 +101,6 @@ async def main():
             # '127.0.0.1',
             # port,
             sock=sock,
-            # family=AF_INET,
-            # type=SOCK_STREAM,
-            # reuse_port=True,
-            # reuse_address=True,
         )
 
         async with server:
