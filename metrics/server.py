@@ -3,6 +3,13 @@ from time import sleep
 from collections import defaultdict
 from environs import Env
 
+from socket import (
+    AF_INET,
+    SOCK_STREAM,
+    # SO_REUSEADDR,
+    # SOL_SOCKET
+)
+
 
 env = Env()
 env.read_env()
@@ -84,7 +91,11 @@ async def main():
 
     server = await loop.create_server(
         lambda: ClientServerProtocol(),
-        '127.0.0.1', port)
+        '127.0.0.1',
+        port,
+        family=AF_INET,
+        type=SOCK_STREAM,
+    )
 
     async with server:
         await server.serve_forever()
