@@ -9,6 +9,7 @@ class HttpTransport:
         self.transport.write(b"HTTP/1.1 200 OK\n\nHello World")
         self.transport.close()
 
+
 def add_http_layer(cls):
 
     class HttpWrapped(cls):
