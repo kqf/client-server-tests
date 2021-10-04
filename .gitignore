@@ -8,3 +8,4 @@
 *.egg*
 .DS_Store
 .python-version
+.coverage
