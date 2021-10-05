@@ -3,12 +3,20 @@ from metrics.protocol import MetricsProtocol
 
 
 @pytest.fixture
-def protocol():
+def servers():
+    return ["origin1", "origin2"]
+
+
+@pytest.fixture
+def measurements():
+    return ["0.1 1", "0.1 2"]
+
+
+@pytest.fixture
+def protocol(servers, measurements):
     protocol = MetricsProtocol()
-    assert protocol.execute("put origin1 0.1 1") == "ok\n\n"
-    assert protocol.execute("put origin1 0.1 2") == "ok\n\n"
-    assert protocol.execute("put origin2 0.1 1") == "ok\n\n"
-    assert protocol.execute("put origin2 0.1 2") == "ok\n\n"
+    for server, m in zip(servers, measurements):
+        assert protocol.execute(f"put {server} {m}") == "ok\n\n"
     return protocol
 
 
