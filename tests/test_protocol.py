@@ -15,12 +15,18 @@ def measurements():
 @pytest.fixture
 def protocol(servers, measurements):
     protocol = MetricsProtocol()
-    for server, m in zip(servers, measurements):
-        assert protocol.execute(f"put {server} {m}") == "ok\n\n"
+    for server in servers:
+        for m in measurements:
+            assert protocol.execute(f"put {server} {m}") == "ok\n\n"
     return protocol
 
 
-def test_metrics_protocol(protocol):
+@pytest.fixture
+def origin1():
+    return "ok\norigin1 0.1 1\norigin1 0.1 2\n\n"
+
+
+def test_metrics_protocol(protocol, origin1):
     # Check not exposed
     assert protocol.execute("putx origin1 0.1 1") == "error\nwrong command\n\n"
 
@@ -41,3 +47,6 @@ def test_metrics_protocol(protocol):
 
     # Check wrong input
     assert protocol.execute("get *")
+
+    # Check the right server
+    protocol.execute("get origin1") == origin1
