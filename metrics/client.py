@@ -21,7 +21,6 @@ class Client:
         self._sock.settimeout(timeout)
 
     def put(self, metrics_name, metrics, timestamp=None):
-        sleep(self.timeout)
         timing = timestamp or int(time.time())
         payload = f"put {metrics_name} {metrics} {timing}\n"
         self._sock.sendall(payload.encode("utf8"))
