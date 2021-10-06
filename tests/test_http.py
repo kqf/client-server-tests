@@ -27,5 +27,5 @@ def test_adds_header():
     decorated.write("something")
 
     message_sent = transport.write_params.decode("utf-8")
-    assert message_sent == "HTTP/1.1 200 OK\n\nHello World"
+    assert message_sent == "HTTP/1.1 200 OK\n\nsomething"
     assert transport.called_close
