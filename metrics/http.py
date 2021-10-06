@@ -6,12 +6,15 @@ class HttpTransport:
 
     def write(self, message):
         print("Decoding a message")
-        self.transport.write(b"HTTP/1.1 200 OK\n\nHello World")
+        encapsulated = f"HTTP/1.1 200 OK\n\n{message}"
+        self.transport.write(encapsulated.encode("utf-8"))
         self.transport.close()
 
 
 def add_http_layer(cls):
-
+    """
+    Adds an additional http-like layer in order to be able to run on Heroku
+    """
     class HttpWrapped(cls):
         def connection_made(self, transport):
             super().connection_made(transport)
