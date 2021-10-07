@@ -6,7 +6,7 @@ class HttpTransport:
 
     def write(self, message):
         print("Decoding a message")
-        encapsulated = f"HTTP/1.1 200 OK\n\n{message}"
+        encapsulated = f"HTTP/1.1 200 OK\n\n{message.decode('utf-8')}"
         self.transport.write(encapsulated.encode("utf-8"))
         self.transport.close()
 
